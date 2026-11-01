@@ -1,0 +1,1504 @@
+/* =====================================================
+   FOR YOU — A Birthday Story
+   Styles
+   ===================================================== */
+
+/* -----------------------------------------------------
+   1. ROOT VARIABLES & RESET
+   ----------------------------------------------------- */
+:root {
+  /* Palette */
+  --cream: #FAF7F0;
+  --forest: #243B2F;
+  --sage: #7A9D7C;
+  --pale-sage: #A5B68D;
+  --white: #FFFFFF;
+
+  /* Derived tones */
+  --forest-soft: rgba(36, 59, 47, 0.08);
+  --forest-line: rgba(36, 59, 47, 0.12);
+  --sage-glow: rgba(122, 157, 124, 0.35);
+  --cream-translucent: rgba(250, 247, 240, 0.72);
+  --white-glass: rgba(255, 255, 255, 0.55);
+  --white-glass-strong: rgba(255, 255, 255, 0.78);
+
+  /* Type */
+  --font-display: "Playfair Display", "Georgia", serif;
+  --font-body: "Inter", -apple-system, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+
+  /* Spacing rhythm */
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 40px;
+  --space-xl: 64px;
+  --space-2xl: 96px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 0.25s;
+  --dur-med: 0.6s;
+  --dur-slow: 1.1s;
+
+  /* Layout */
+  --max-width: 720px;
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 10px;
+
+  /* Spine */
+  --spine-width: 2px;
+  --spine-offset: 18px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--forest);
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+::selection {
+  background: var(--pale-sage);
+  color: var(--forest);
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* -----------------------------------------------------
+   2. AMBIENT BACKGROUND
+   ----------------------------------------------------- */
+.ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ambient__glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.5;
+  will-change: transform;
+}
+
+.ambient__glow--one {
+  width: 60vw;
+  height: 60vw;
+  max-width: 480px;
+  max-height: 480px;
+  top: -10%;
+  right: -20%;
+  background: radial-gradient(circle, var(--sage-glow), transparent 70%);
+  animation: drift-one 26s ease-in-out infinite;
+}
+
+.ambient__glow--two {
+  width: 70vw;
+  height: 70vw;
+  max-width: 520px;
+  max-height: 520px;
+  bottom: 5%;
+  left: -25%;
+  background: radial-gradient(circle, rgba(165, 182, 141, 0.35), transparent 70%);
+  animation: drift-two 32s ease-in-out infinite;
+}
+
+@keyframes drift-one {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-6%, 8%) scale(1.08); }
+}
+
+@keyframes drift-two {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(8%, -6%) scale(1.05); }
+}
+
+/* Floating particles (soft dots / petals) */
+.particles {
+  position: absolute;
+  inset: 0;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--pale-sage);
+  opacity: 0.25;
+  will-change: transform, opacity;
+  animation: float-particle linear infinite;
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 0.35; }
+  90% { opacity: 0.25; }
+  100% {
+    transform: translateY(-110vh) translateX(var(--drift, 30px)) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+/* -----------------------------------------------------
+   3. STORY SPINE (signature element)
+   A vertical vine that fills as the reader scrolls,
+   with leaf-nodes marking each chapter.
+   ----------------------------------------------------- */
+.spine {
+  position: fixed;
+  top: 0;
+  left: var(--spine-offset);
+  height: 100vh;
+  width: 28px;
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.spine__line {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--spine-width);
+  height: 100%;
+}
+
+.spine__track {
+  stroke: var(--forest-line);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.spine__fill {
+  stroke: var(--sage);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  transition: y2 0.15s linear;
+  filter: drop-shadow(0 0 4px var(--sage-glow));
+}
+
+.spine__nodes {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.spine__node {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  pointer-events: auto;
+}
+
+.spine__node-leaf {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 60% 0 60% 0;
+  background: var(--cream);
+  border: 2px solid var(--pale-sage);
+  transform: rotate(45deg);
+  transition: background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
+}
+
+.spine__node.is-active .spine__node-leaf {
+  background: var(--sage);
+  border-color: var(--sage);
+  box-shadow: 0 0 0 5px var(--sage-glow);
+  transform: rotate(45deg) scale(1.15);
+}
+
+.spine__node.is-passed .spine__node-leaf {
+  background: var(--pale-sage);
+  border-color: var(--pale-sage);
+}
+
+/* Hide the spine on the opening scene for a cleaner first impression */
+.spine.is-hidden {
+  opacity: 0;
+  transition: opacity var(--dur-med) var(--ease-out);
+}
+
+/* -----------------------------------------------------
+   4. SHARED LAYOUT PRIMITIVES
+   ----------------------------------------------------- */
+.glass {
+  background: var(--white-glass);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 1px 1px rgba(36, 59, 47, 0.03),
+    0 12px 32px rgba(36, 59, 47, 0.08);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 16px 32px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out);
+}
+
+.btn--ghost {
+  background: var(--forest);
+  color: var(--cream);
+  box-shadow: 0 8px 24px rgba(36, 59, 47, 0.25);
+}
+
+.btn--ghost:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(36, 59, 47, 0.3);
+}
+
+.btn--ghost:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn__arrow {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.btn--ghost:hover .btn__arrow {
+  transform: translateX(3px);
+}
+
+/* Shared pulsing hint used by envelope + gift "tap to open" labels */
+@keyframes pulse-hint {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* -----------------------------------------------------
+   5. OPENING SCENE
+   ----------------------------------------------------- */
+.scene {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-lg) var(--space-md);
+}
+
+.scene__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 480px;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: scene-rise 1.4s var(--ease-out) 0.2s forwards;
+}
+
+@keyframes scene-rise {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.scene__eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sage);
+  font-weight: 600;
+}
+
+.scene__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.6rem, 11vw, 4.2rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--forest);
+}
+
+.scene__heart {
+  display: inline-flex;
+  align-items: center;
+  color: var(--sage);
+  animation: heartbeat 2.4s ease-in-out infinite;
+  transform-origin: center;
+  vertical-align: -0.05em;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.18); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.12); }
+  60% { transform: scale(1); }
+}
+
+.scene__subtitle {
+  font-size: 1.05rem;
+  color: var(--forest);
+  opacity: 0.7;
+  max-width: 32ch;
+}
+
+.scene__cta {
+  margin-top: var(--space-sm);
+}
+
+/* Scroll hint */
+.scene__scrollhint {
+  position: absolute;
+  bottom: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scene__scrollline {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, var(--sage), transparent);
+  animation: scrollline 2.2s ease-in-out infinite;
+}
+
+@keyframes scrollline {
+  0% { transform: scaleY(0.4); opacity: 0.3; transform-origin: top; }
+  50% { transform: scaleY(1); opacity: 1; transform-origin: top; }
+  100% { transform: scaleY(0.4); opacity: 0.3; transform-origin: top; }
+}
+
+/* -----------------------------------------------------
+   6. CHAPTER SHARED STYLES
+   ----------------------------------------------------- */
+.chapter {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-md) var(--space-2xl) calc(var(--space-md) + 30px);
+}
+
+.chapter--wide {
+  max-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.chapter--wide .chapter__head {
+  max-width: var(--max-width);
+  margin: 0 auto var(--space-xl) auto;
+  padding: 0 var(--space-md) 0 calc(var(--space-md) + 30px);
+}
+
+.chapter__head {
+  margin-bottom: var(--space-xl);
+}
+
+.chapter__kicker {
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sage);
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.chapter__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 8vw, 2.8rem);
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-xs);
+}
+
+.chapter__lede {
+  color: var(--forest);
+  opacity: 0.65;
+  font-size: 1rem;
+  max-width: 36ch;
+}
+
+/* Generic scroll-reveal utility */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* -----------------------------------------------------
+   7. CHAPTER 1 — LETTER
+   ----------------------------------------------------- */
+.letter-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xl);
+}
+
+/* Frame reserves a fixed box so the letter can slide up into the
+   empty space above it without overlapping page content. */
+.envelope-frame {
+  position: relative;
+  width: min(320px, 86vw);
+  height: 340px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.envelope {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  cursor: pointer;
+  perspective: 800px;
+}
+
+.envelope:active {
+  transform: scale(0.985);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+/* Back panel — sits behind everything, gives the envelope its base shadow */
+.envelope__back {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  box-shadow: 0 18px 40px rgba(36, 59, 47, 0.14);
+  z-index: 1;
+}
+
+/* The letter card preview that slides up out of the envelope.
+   Sits above the back panel but below the front pocket, so it looks
+   tucked inside until it slides out. */
+.envelope__letter {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 8%;
+  height: 76%;
+  background: var(--cream);
+  border: 1px solid var(--forest-line);
+  border-radius: 6px;
+  z-index: 2;
+  box-shadow: 0 4px 14px rgba(36, 59, 47, 0.08);
+  transition: transform 0.9s var(--ease-out), opacity 0.6s var(--ease-out) 0.2s;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.envelope__letter-lines span {
+  display: block;
+  height: 6px;
+  border-radius: 4px;
+  background: var(--pale-sage);
+  opacity: 0.6;
+}
+
+.envelope__letter-lines span:nth-child(1) { width: 65%; }
+.envelope__letter-lines span:nth-child(2) { width: 90%; }
+.envelope__letter-lines span:nth-child(3) { width: 55%; }
+.envelope__letter-lines span:nth-child(4) { width: 78%; }
+
+/* Front pocket — the lower triangular flap of the envelope body.
+   Sits above the letter, so the letter appears tucked behind it
+   until it slides upward past the pocket's top edge. */
+.envelope__front {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  clip-path: polygon(0% 28%, 50% 62%, 100% 28%, 100% 100%, 0% 100%);
+  z-index: 3;
+  box-shadow: inset 0 -1px 0 rgba(36, 59, 47, 0.04);
+}
+
+/* Flap wrapper provides the 3D perspective context so the flap can
+   fold backward realistically without clipping or floating. */
+.envelope__flap-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 62%;
+  z-index: 4;
+  transform-style: preserve-3d;
+}
+
+.envelope__flap {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--white) 0%, #f2efe6 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  backface-visibility: hidden;
+  transition: transform 0.85s var(--ease-in-out), box-shadow 0.85s var(--ease-in-out);
+  box-shadow: 0 2px 10px rgba(36, 59, 47, 0.08);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+/* Wax seal sits centered on the flap's point */
+.envelope__seal {
+  position: absolute;
+  top: 56%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--sage);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  z-index: 5;
+  box-shadow: 0 6px 16px rgba(122, 157, 124, 0.45);
+  transition: transform 0.5s var(--ease-out), opacity 0.35s var(--ease-out);
+}
+
+.envelope__shadow {
+  position: absolute;
+  bottom: -16px;
+  left: 8%;
+  width: 84%;
+  height: 20px;
+  background: rgba(36, 59, 47, 0.16);
+  border-radius: 50%;
+  filter: blur(14px);
+  z-index: 0;
+  transition: opacity var(--dur-med) var(--ease-out);
+}
+
+.envelope__hint {
+  margin-top: var(--space-md);
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage);
+  font-weight: 600;
+  opacity: 0.8;
+  animation: pulse-hint 2.6s ease-in-out infinite;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+/* ---- Open state ---- */
+.envelope.is-open {
+  cursor: default;
+}
+
+.envelope.is-open .envelope__flap {
+  transform: rotateX(-165deg);
+  box-shadow: 0 -2px 12px rgba(36, 59, 47, 0.1);
+}
+
+.envelope.is-open .envelope__seal {
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+}
+
+/* The letter rises a fixed distance — enough to clear the envelope
+   and land in the open space reserved by .envelope-frame, without
+   ever reaching the chapter heading above. */
+.envelope.is-open .envelope__letter {
+  transform: translateY(-148px) scale(1.03);
+  opacity: 0;
+}
+
+.envelope.is-open .envelope__shadow {
+  opacity: 0;
+}
+
+.envelope-frame.is-open .envelope__hint {
+  opacity: 0;
+}
+
+/* Revealed letter card with typewriter text */
+.letter-card {
+  width: 100%;
+  max-width: 540px;
+  padding: var(--space-lg) var(--space-md);
+  text-align: left;
+  opacity: 0;
+  transform: translateY(24px) scale(0.98);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  pointer-events: none;
+}
+
+.letter-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.letter-card__to {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.4rem;
+  margin-bottom: var(--space-sm);
+  color: var(--forest);
+}
+
+.letter-card__body {
+  font-size: 1.02rem;
+  line-height: 1.85;
+  color: var(--forest);
+  min-height: 11em;
+  white-space: pre-line;
+}
+
+/* Typewriter caret */
+.letter-card__body.is-typing::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--sage);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: caret-blink 0.9s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+
+.letter-card__sign {
+  margin-top: var(--space-md);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--sage);
+  text-align: right;
+}
+
+/* -----------------------------------------------------
+   8. CHAPTER 2 — POLAROIDS
+   ----------------------------------------------------- */
+.polaroid-field {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg) var(--space-sm);
+  padding: var(--space-lg) calc(var(--space-md) + 40px) var(--space-lg) calc(var(--space-md) + 40px);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.polaroid {
+  position: relative;
+  background: var(--white);
+  padding: 10px 10px 36px 10px;
+  border-radius: 4px;
+  box-shadow:
+    0 2px 4px rgba(36, 59, 47, 0.06),
+    0 14px 28px rgba(36, 59, 47, 0.14);
+  cursor: pointer;
+  transform: rotate(var(--rot, 0deg));
+  transition: transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out);
+  animation: polaroid-float var(--float-dur, 7s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+  will-change: transform;
+}
+
+.polaroid:nth-child(2n) {
+  margin-top: var(--space-lg);
+}
+
+.polaroid__photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--pale-sage);
+}
+
+.polaroid__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.polaroid__caption {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--forest);
+  opacity: 0.75;
+}
+
+.polaroid:hover {
+  transform: rotate(var(--rot, 0deg)) scale(1.04) translateY(-4px);
+  box-shadow:
+    0 4px 8px rgba(36, 59, 47, 0.08),
+    0 20px 36px rgba(36, 59, 47, 0.18);
+  z-index: 2;
+}
+
+.polaroid:active {
+  transform: rotate(var(--rot, 0deg)) scale(0.97);
+}
+
+@keyframes polaroid-float {
+  0%, 100% { transform: rotate(var(--rot, 0deg)) translateY(0px); }
+  50% { transform: rotate(var(--rot, 0deg)) translateY(-8px); }
+}
+
+.polaroid:hover,
+.polaroid:focus-visible {
+  animation-play-state: paused;
+}
+
+.polaroid-field__hint {
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage);
+  font-weight: 600;
+  opacity: 0.8;
+  margin-top: var(--space-sm);
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity var(--dur-med) var(--ease-out), visibility var(--dur-med);
+}
+
+.lightbox.is-open {
+  visibility: visible;
+  opacity: 1;
+}
+
+.lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(36, 59, 47, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.lightbox__stage {
+  position: relative;
+  z-index: 1;
+  width: min(92vw, 480px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: pan-y;
+}
+
+.lightbox__img {
+  width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+  transform: scale(0.94);
+  transition: transform var(--dur-med) var(--ease-out);
+  background: var(--white);
+}
+
+.lightbox.is-open .lightbox__img {
+  transform: scale(1);
+}
+
+.lightbox__close,
+.lightbox__nav {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--white-glass-strong);
+  backdrop-filter: blur(10px);
+  color: var(--forest);
+  transition: transform var(--dur-fast) var(--ease-out), background var(--dur-fast);
+}
+
+.lightbox__close:hover,
+.lightbox__nav:hover {
+  background: var(--white);
+  transform: scale(1.06);
+}
+
+.lightbox__close {
+  top: -56px;
+  right: 0;
+}
+
+/* On mobile, keep nav buttons inside the stage bounds, overlapping
+   the image edges, since there's no room outside a 92vw-wide stage. */
+.lightbox__nav--prev { left: 4px; }
+.lightbox__nav--next { right: 4px; }
+
+@media (min-width: 640px) {
+  .lightbox__stage {
+    width: min(80vw, 480px);
+  }
+
+  .lightbox__nav--prev { left: -56px; }
+  .lightbox__nav--next { right: -56px; }
+}
+
+/* -----------------------------------------------------
+   9. CHAPTER 3 — REASONS I LOVE YOU
+   ----------------------------------------------------- */
+.reasons-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
+}
+
+.reason-card {
+  position: relative;
+  min-height: 120px;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  cursor: pointer;
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: 0 8px 24px rgba(36, 59, 47, 0.06);
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+  display: flex;
+  align-items: center;
+}
+
+.reason-card:active {
+  transform: scale(0.99);
+}
+
+.reason-card__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: var(--space-md);
+  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  backface-visibility: hidden;
+}
+
+.reason-card__face--front {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.reason-card__number {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.6rem;
+  color: var(--pale-sage);
+  flex-shrink: 0;
+  width: 2.4ch;
+}
+
+.reason-card__prompt {
+  font-weight: 500;
+  font-size: 1.02rem;
+  color: var(--forest);
+}
+
+.reason-card__face--back {
+  background: linear-gradient(135deg, var(--forest) 0%, #2f4d3c 100%);
+  color: var(--cream);
+  opacity: 0;
+  transform: translateY(8px);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.08rem;
+  line-height: 1.6;
+}
+
+.reason-card.is-flipped .reason-card__face--front {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.reason-card.is-flipped .reason-card__face--back {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reason-card.is-flipped {
+  box-shadow: 0 14px 32px rgba(36, 59, 47, 0.22);
+}
+
+/* -----------------------------------------------------
+   10. CHAPTER 4 — MEMORY LANE (TIMELINE)
+   ----------------------------------------------------- */
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  padding-left: var(--space-md);
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--pale-sage), var(--forest-line));
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: var(--space-lg);
+}
+
+.timeline-item__dot {
+  position: absolute;
+  left: -1px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--sage);
+  transition: transform 0.5s var(--ease-out), background 0.5s var(--ease-out);
+}
+
+.timeline-item.is-visible .timeline-item__dot {
+  background: var(--sage);
+  transform: scale(1.15);
+}
+
+.timeline-item__date {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sage);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.timeline-item__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  margin-bottom: 6px;
+}
+
+.timeline-item__text {
+  color: var(--forest);
+  opacity: 0.72;
+  font-size: 0.96rem;
+  max-width: 42ch;
+}
+
+/* -----------------------------------------------------
+   11. CHAPTER 5 — LITTLE THINGS
+   ----------------------------------------------------- */
+.little-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
+}
+
+.little-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: 0 8px 24px rgba(36, 59, 47, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.little-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--pale-sage);
+}
+
+.little-card__label {
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sage);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.little-card__content {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--forest);
+}
+
+.little-card--quote .little-card__content {
+  font-style: italic;
+}
+
+.little-card__sub {
+  margin-top: 6px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--forest);
+  opacity: 0.6;
+}
+
+/* -----------------------------------------------------
+   12. CHAPTER 6 — GIFT BOX & SURPRISE
+   ----------------------------------------------------- */
+.chapter--final {
+  text-align: center;
+  padding-bottom: var(--space-2xl);
+}
+
+.gift-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xl);
+  position: relative;
+}
+
+.gift {
+  position: relative;
+  width: 220px;
+  height: 210px;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.gift:active {
+  transform: scale(0.985);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.gift__glow {
+  position: absolute;
+  inset: -40px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sage-glow), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-out);
+  filter: blur(20px);
+}
+
+/* Box is a centered column: lid stacked directly on the body,
+   with a slight overlap so there's no visual gap between them. */
+.gift__box {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.gift__body {
+  position: relative;
+  width: 160px;
+  height: 104px;
+  background: var(--forest);
+  border-radius: 4px 4px 8px 8px;
+  box-shadow: 0 18px 40px rgba(36, 59, 47, 0.28);
+  transition: transform 0.6s var(--ease-in-out);
+  overflow: hidden;
+}
+
+.gift__ribbon-v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 22px;
+  transform: translateX(-50%);
+  background: var(--pale-sage);
+}
+
+/* Lid sits flush on top of the body, slightly wider for a "cap" look */
+.gift__lid {
+  position: relative;
+  width: 176px;
+  height: 38px;
+  background: var(--sage);
+  border-radius: 6px 6px 3px 3px;
+  box-shadow: 0 6px 14px rgba(36, 59, 47, 0.18);
+  z-index: 2;
+  margin-bottom: -3px;
+  transition: transform 0.9s var(--ease-in-out), opacity 0.6s var(--ease-out);
+  transform-origin: center bottom;
+  overflow: hidden;
+}
+
+.gift__ribbon-h {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 22px;
+  transform: translateX(-50%);
+  background: var(--pale-sage);
+}
+
+/* Bow sits centered above the lid, anchored from the bottom so it
+   tracks the lid regardless of box sizing. Slight overlap into the
+   lid hides the seam between bow and ribbon. */
+.gift__bow {
+  position: absolute;
+  bottom: 128px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 38px;
+  z-index: 3;
+}
+
+/* Each loop is an ellipse tilted outward from center, like a ribbon
+   curl — wider at the outside edge, tapering toward the knot. */
+.gift__bow-loop {
+  position: absolute;
+  top: 0;
+  width: 46px;
+  height: 36px;
+  background: var(--pale-sage);
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(36, 59, 47, 0.12);
+}
+
+.gift__bow-loop--left {
+  left: 4px;
+  transform: rotate(-32deg);
+  border-radius: 50% 50% 50% 10%;
+}
+
+.gift__bow-loop--right {
+  right: 4px;
+  transform: rotate(32deg);
+  border-radius: 50% 50% 10% 50%;
+}
+
+.gift__bow-knot {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 26px;
+  background: var(--sage);
+  border-radius: 50%;
+  z-index: 1;
+  box-shadow: 0 3px 8px rgba(36, 59, 47, 0.15);
+}
+
+.gift__hint {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage);
+  font-weight: 600;
+  opacity: 0.8;
+  animation: pulse-hint 2.6s ease-in-out infinite;
+  margin-top: var(--space-md);
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+
+/* Open state: lid pops off and tumbles away, body settles, glow appears */
+.gift.is-open .gift__glow {
+  opacity: 1;
+}
+
+.gift.is-open .gift__lid {
+  transform: translateY(-90px) translateX(40px) rotate(24deg);
+  opacity: 0;
+}
+
+.gift.is-open .gift__body {
+  transform: scale(1.04) translateY(2px);
+}
+
+.gift.is-open .gift__hint {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Surprise card */
+.surprise {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  padding: var(--space-lg) var(--space-md);
+  text-align: left;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(28px) scale(0.97);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  pointer-events: none;
+}
+
+.surprise.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.surprise__shimmer {
+  position: absolute;
+  inset: -50%;
+  background: radial-gradient(circle at 30% 20%, rgba(165, 182, 141, 0.5), transparent 55%);
+  opacity: 0;
+  animation: shimmer-pulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.surprise.is-visible .surprise__shimmer {
+  opacity: 1;
+}
+
+@keyframes shimmer-pulse {
+  0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.4; }
+  50% { transform: rotate(8deg) scale(1.1); opacity: 0.7; }
+}
+
+.surprise__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.6rem;
+  margin-bottom: var(--space-sm);
+  position: relative;
+}
+
+.surprise__message {
+  font-size: 1rem;
+  line-height: 1.8;
+  opacity: 0.8;
+  margin-bottom: var(--space-md);
+  position: relative;
+}
+
+.surprise__quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--sage);
+  position: relative;
+}
+
+.surprise__quote-attr {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  opacity: 0.55;
+  position: relative;
+}
+
+/* Confetti canvas */
+.confetti {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* -----------------------------------------------------
+   13. CLOSING
+   ----------------------------------------------------- */
+.closing {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: var(--space-2xl) var(--space-md) calc(var(--space-2xl) + 24px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.closing__text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+  opacity: 0.6;
+}
+
+.closing__heart {
+  display: inline-flex;
+  align-items: center;
+  color: var(--sage);
+  font-size: 1.2rem;
+  animation: heartbeat 2.4s ease-in-out infinite;
+}
+
+/* -----------------------------------------------------
+   14. RESPONSIVE — TABLET / DESKTOP
+   ----------------------------------------------------- */
+@media (min-width: 640px) {
+  :root {
+    --spine-offset: 28px;
+  }
+
+  .chapter {
+    padding-left: calc(var(--space-lg) + 30px);
+    padding-right: var(--space-lg);
+  }
+
+  .chapter--wide .chapter__head {
+    padding-left: calc(var(--space-lg) + 30px);
+    padding-right: var(--space-lg);
+  }
+
+  .polaroid-field {
+    grid-template-columns: repeat(3, 1fr);
+    padding-left: calc(var(--space-lg) + 40px);
+    padding-right: var(--space-lg);
+    gap: var(--space-xl) var(--space-md);
+  }
+
+  .polaroid:nth-child(3n - 1) {
+    margin-top: var(--space-lg);
+  }
+
+  .polaroid:nth-child(2n) {
+    margin-top: 0;
+  }
+
+  .reasons-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .little-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .chapter {
+    padding-left: calc(var(--space-2xl) + 30px);
+    padding-right: var(--space-2xl);
+  }
+
+  .chapter--wide .chapter__head {
+    padding-left: calc(var(--space-2xl) + 30px);
+    padding-right: var(--space-2xl);
+  }
+
+  .polaroid-field {
+    grid-template-columns: repeat(4, 1fr);
+    padding-left: calc(var(--space-2xl) + 40px);
+    padding-right: var(--space-2xl);
+    max-width: 900px;
+  }
+
+  .little-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* -----------------------------------------------------
+   15. ACCESSIBILITY — FOCUS STATES
+   ----------------------------------------------------- */
+button:focus-visible,
+.envelope:focus-visible,
+.gift:focus-visible,
+.polaroid:focus-visible,
+.reason-card:focus-visible,
+.spine__node:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}

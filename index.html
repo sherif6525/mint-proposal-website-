@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>For You — A Birthday Story</title>
+
+  <!-- Fonts: Playfair Display (display/serif moments) + Inter (body/UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================= -->
+  <!-- AMBIENT BACKGROUND LAYER (floating particles) -->
+  <!-- ============================================= -->
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient__glow ambient__glow--one"></div>
+    <div class="ambient__glow ambient__glow--two"></div>
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <!-- ============================================= -->
+  <!-- STORY SPINE — the signature element            -->
+  <!-- A thin vine that grows down the page as you    -->
+  <!-- scroll, with leaf-nodes marking each chapter   -->
+  <!-- ============================================= -->
+  <nav class="spine" id="spine" aria-label="Story progress">
+    <svg class="spine__line" viewBox="0 0 4 1000" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="2" y1="0" x2="2" y2="1000" class="spine__track" />
+      <line x1="2" y1="0" x2="2" y2="0" class="spine__fill" id="spineFill" />
+    </svg>
+    <div class="spine__nodes" id="spineNodes">
+      <!-- nodes injected by JS -->
+    </div>
+  </nav>
+
+  <!-- ============================================= -->
+  <!-- OPENING SCENE — Cinematic welcome              -->
+  <!-- ============================================= -->
+  <section class="scene scene--opening" id="opening">
+    <div class="scene__inner">
+      <p class="scene__eyebrow">a story, just for you</p>
+      <h1 class="scene__title">
+        Happy Birthday
+        <span class="scene__heart" aria-hidden="true">
+          <svg viewBox="0 0 24 22" width="0.85em" height="0.85em" fill="currentColor" aria-hidden="true">
+            <path d="M12 21.3c-.3 0-.6-.1-.8-.3C5.8 16.6 2 12.9 2 8.6 2 5.5 4.3 3 7.3 3c1.9 0 3.6 1 4.7 2.6C13.1 4 14.8 3 16.7 3 19.7 3 22 5.5 22 8.6c0 4.3-3.8 8-9.2 12.4-.2.2-.5.3-.8.3z"/>
+          </svg>
+        </span>
+        <span class="visually-hidden">❤</span>
+      </h1>
+      <p class="scene__subtitle">Every page of this is a little piece of us.</p>
+      <button class="btn btn--ghost scene__cta" id="beginBtn">
+        <span>Begin Our Story</span>
+        <svg class="btn__arrow" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+          <path d="M4 9H14M14 9L10 5M14 9L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="scene__scrollhint" aria-hidden="true">
+      <span class="scene__scrollline"></span>
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- CHAPTER 1 — A Letter To You                    -->
+  <!-- ============================================= -->
+  <section class="chapter" id="chapter1" data-chapter="A Letter To You" data-leaf="letter">
+    <div class="chapter__head">
+      <p class="chapter__kicker">Chapter One</p>
+      <h2 class="chapter__title">A Letter To You</h2>
+      <p class="chapter__lede">Before anything else — something I needed to say.</p>
+    </div>
+
+    <div class="letter-stage">
+      <!-- Envelope (fixed-size frame keeps the slide-up letter contained) -->
+      <div class="envelope-frame">
+        <div class="envelope" id="envelope" role="button" tabindex="0" aria-expanded="false" aria-label="Open the letter">
+          <div class="envelope__letter" aria-hidden="true">
+            <div class="envelope__letter-lines">
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+          <div class="envelope__back"></div>
+          <div class="envelope__front"></div>
+          <div class="envelope__flap-wrap">
+            <div class="envelope__flap"></div>
+          </div>
+          <div class="envelope__seal">
+            <span>S</span>
+          </div>
+          <div class="envelope__shadow"></div>
+        </div>
+        <p class="envelope__hint" id="envelopeHint">tap to open</p>
+      </div>
+
+      <!-- Revealed letter content -->
+      <div class="letter-card glass" id="letterCard">
+        <p class="letter-card__to">My dearest,</p>
+        <p class="letter-card__body" id="letterTyped"></p>
+        <p class="letter-card__sign">— forever yours</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- CHAPTER 2 — Moments We Captured (Polaroids)    -->
+  <!-- ============================================= -->
+  <section class="chapter chapter--wide" id="chapter2" data-chapter="Moments We Captured" data-leaf="moments">
+    <div class="chapter__head">
+      <p class="chapter__kicker">Chapter Two</p>
+      <h2 class="chapter__title">Moments We Captured</h2>
+      <p class="chapter__lede">A handful of frames from a thousand I'd keep.</p>
+    </div>
+
+    <div class="polaroid-field" id="polaroidField">
+      <!-- 10 polaroids injected with JS for rotation variety -->
+    </div>
+    <p class="polaroid-field__hint">tap a photo to look closer</p>
+  </section>
+
+  <!-- Photo lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox__backdrop" id="lightboxBackdrop"></div>
+    <div class="lightbox__stage">
+      <button class="lightbox__close" id="lightboxClose" aria-label="Close photo">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M5 5L17 17M17 5L5 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button class="lightbox__nav lightbox__nav--prev" id="lightboxPrev" aria-label="Previous photo">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 16L6.5 10L12.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <img class="lightbox__img" id="lightboxImg" src="" alt="" />
+      <button class="lightbox__nav lightbox__nav--next" id="lightboxNext" aria-label="Next photo">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 4L13.5 10L7.5 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================= -->
+  <!-- CHAPTER 3 — Reasons I Love You                 -->
+  <!-- ============================================= -->
+  <section class="chapter" id="chapter3" data-chapter="Reasons I Love You" data-leaf="reasons">
+    <div class="chapter__head">
+      <p class="chapter__kicker">Chapter Three</p>
+      <h2 class="chapter__title">Reasons I Love You</h2>
+      <p class="chapter__lede">Just a few. Tap each one.</p>
+    </div>
+
+    <div class="reasons-grid" id="reasonsGrid">
+      <!-- reason cards injected by JS -->
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- CHAPTER 4 — Memory Lane (vertical timeline)    -->
+  <!-- ============================================= -->
+  <section class="chapter" id="chapter4" data-chapter="Memory Lane" data-leaf="lane">
+    <div class="chapter__head">
+      <p class="chapter__kicker">Chapter Four</p>
+      <h2 class="chapter__title">Memory Lane</h2>
+      <p class="chapter__lede">A few stops along the way that I never want to forget.</p>
+    </div>
+
+    <div class="timeline" id="timeline">
+      <!-- timeline items injected by JS -->
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- CHAPTER 5 — Little Things                      -->
+  <!-- ============================================= -->
+  <section class="chapter" id="chapter5" data-chapter="Little Things" data-leaf="little-things">
+    <div class="chapter__head">
+      <p class="chapter__kicker">Chapter Five</p>
+      <h2 class="chapter__title">Little Things</h2>
+      <p class="chapter__lede">The small stuff that quietly became everything.</p>
+    </div>
+
+    <div class="little-grid" id="littleGrid">
+      <!-- little-thing cards injected by JS -->
+    </div>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- CHAPTER 6 — Birthday Surprise (gift box)       -->
+  <!-- ============================================= -->
+  <section class="chapter chapter--final" id="chapter6" data-chapter="The Surprise" data-leaf="surprise">
+    <div class="chapter__head">
+      <p class="chapter__kicker">Final Chapter</p>
+      <h2 class="chapter__title">One More Thing</h2>
+      <p class="chapter__lede">Saved this for last.</p>
+    </div>
+
+    <div class="gift-stage">
+      <!-- Gift box -->
+      <div class="gift" id="gift" role="button" tabindex="0" aria-expanded="false" aria-label="Open your gift">
+        <div class="gift__glow"></div>
+        <div class="gift__box">
+          <div class="gift__bow">
+            <span class="gift__bow-loop gift__bow-loop--left"></span>
+            <span class="gift__bow-loop gift__bow-loop--right"></span>
+            <span class="gift__bow-knot"></span>
+          </div>
+          <div class="gift__lid">
+            <div class="gift__ribbon-h"></div>
+          </div>
+          <div class="gift__body">
+            <div class="gift__ribbon-v"></div>
+          </div>
+        </div>
+        <p class="gift__hint">tap to open</p>
+      </div>
+
+      <!-- Surprise reveal -->
+      <div class="surprise glass" id="surprise" aria-hidden="true">
+        <div class="surprise__shimmer"></div>
+        <p class="surprise__title">Happy Birthday, my love.</p>
+        <p class="surprise__message">
+          Of all the days on the calendar, this is my favorite — because it's the day the world got you in it.
+          Thank you for every laugh, every quiet evening, every little adventure. Here's to another year of us.
+        </p>
+        <p class="surprise__quote">"You are my today and all of my tomorrows."</p>
+        <p class="surprise__quote-attr">— Leo Christopher</p>
+      </div>
+    </div>
+
+    <!-- Confetti canvas -->
+    <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+  </section>
+
+  <!-- ============================================= -->
+  <!-- CLOSING                                         -->
+  <!-- ============================================= -->
+  <footer class="closing">
+    <p class="closing__text">Made with my whole heart, for yours.</p>
+    <span class="closing__heart" aria-hidden="true">
+      <svg viewBox="0 0 24 22" width="1em" height="1em" fill="currentColor" aria-hidden="true">
+        <path d="M12 21.3c-.3 0-.6-.1-.8-.3C5.8 16.6 2 12.9 2 8.6 2 5.5 4.3 3 7.3 3c1.9 0 3.6 1 4.7 2.6C13.1 4 14.8 3 16.7 3 19.7 3 22 5.5 22 8.6c0 4.3-3.8 8-9.2 12.4-.2.2-.5.3-.8.3z"/>
+      </svg>
+    </span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
